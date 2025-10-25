@@ -24,8 +24,8 @@ pipeline {
             steps {
                 echo '☁️ Pushing image to Docker Hub...'
                 sh '''
-                    docker tag flaskapp:v1 akshitha8106/flaskapp1:kubeimage1
-                    docker push akshitha8106/flaskapp1:kubeimage1
+                    docker tag flaskapp:v1 52106/flaskapp1:kubeimage1
+                    docker push 52106/flaskapp1:kubeimage1
    
                 '''
             }
