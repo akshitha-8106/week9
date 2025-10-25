@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: flaskapp
-        image: akshitha8106/flaskapp:kubeimage1
+        image: 52106/flaskapp1:kubeimage1
         ports:
         - containerPort: 5000
