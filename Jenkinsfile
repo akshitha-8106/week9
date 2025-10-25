@@ -1,36 +1,48 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-cred')
+    }
+
     stages {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker Image...'
-                bat 'docker build -t kubedemoapp:v1 .'
+                sh 'docker build -t flaskapp:v1 .'
             }
         }
-        stage('Docker Login') {
+
+        stage('Login to Docker Hub') {
             steps {
-                bat 'docker login -u bhavani765 -p bhanu@123'
+                echo 'Logging in to Docker Hub...'
+                sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
             }
         }
-        stage('Push Image to Docker Hub') {
+
+        stage('Push to Docker Hub') {
             steps {
-                bat 'docker tag kubedemoapp:v1 bhavani765/sample:kubeimage1'
-                bat 'docker push bhavani765/sample:kubeimage1'
+                echo 'Pushing image to Docker Hub...'
+                sh 'docker tag flaskapp:v1 akshitha8106/flaskapp:kubeimage1'
+                sh 'docker push akshitha8106/flaskapp:kubeimage1'
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl apply -f deployment.yaml --validate=false'
-                bat 'kubectl apply -f service.yaml'
+                echo 'Deploying to Kubernetes...'
+                sh 'kubectl apply -f deployment.yaml --validate=false'
+                sh 'kubectl apply -f service.yaml'
             }
         }
     }
+
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '✅ CI/CD pipeline executed successfully!'
         }
         failure {
-            echo '❌ Pipeline failed. Check logs.'
+            echo '❌ Pipeline failed — check logs.'
         }
     }
 }
